@@ -1,0 +1,61 @@
+  [32mINFO    [0m | [32mLoading settings from fhir-parser-resources/settings.py[0m
+  [32mINFO    [0m | [32mResource properties are not sorted[0m
+  [32mINFO    [0m | [32mSpecification: http://hl7.org/fhir/R4[0m
+  [32mINFO    [0m | [32mTemplate directory: fhir-parser-resources[0m
+  [32mINFO    [0m | [32mOutput directory: model[0m
+  [32mINFO    [0m | [32mUnit test directory: tests/model[0m
+  [32mINFO    [0m | [32mCache directory: downloads[0m
+  [32mINFO    [0m | [32mUsing cached resources, supply "-f" to re-download[0m
+  [32mINFO    [0m | [32mReading valuesets.json[0m
+  [33mWARNING [0m | [33mCodeSystem with no concepts: http://snomed.info/sct[0m
+  [33mWARNING [0m | [33mCodeSystem with no concepts: http://hl7.org/fhir/CodeSystem/summary[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/object-role" because at least one concept code starts with a number[0m
+  [37mDEBUG   [0m | [37mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/insurance-plan-type" whose content is fragment[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/FHIR-version" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/ex-oralprostho" because at least one concept code starts with a number[0m
+  [37mDEBUG   [0m | [37mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/service-type" whose content is example[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/spdx-license" because it has > 200 (346) concepts[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/security-source-type" because at least one concept code starts with a number[0m
+  [37mDEBUG   [0m | [37mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/service-category" whose content is example[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-tooth" because at least one concept code starts with a number[0m
+  [37mDEBUG   [0m | [37mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/appointment-cancellation-reason" whose content is example[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "urn:oid:1.2.36.1.2001.1001.101.104.16592" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/ex-fdi" because at least one concept code starts with a number[0m
+  [37mDEBUG   [0m | [37mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/program" whose content is example[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/chargeitem-billingcodes" because at least one concept code starts with a number[0m
+  [33mWARNING [0m | [33mCodeSystem with no concepts: http://hl7.org/fhir/message-events[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/sid/ex-icd-10-procedures" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-serviceplace" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/audit-entity-type" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-revenue-center" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-diagnosisrelatedgroup" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/observation-statistics" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/dicom-audit-lifecycle" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "urn:iso-astm:E1762-95:2013" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-USCLS" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/audit-event-outcome" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/fm-conditions" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://dicom.nema.org/resources/ontology/DCM" because it has > 200 (3156) concepts[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/chromosome-human" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://hl7.org/fhir/network-type" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-providerqualification" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mWill not generate enum for CodeSystem "http://terminology.hl7.org/CodeSystem/ex-benefitcategory" because at least one concept code starts with a number[0m
+  [32mINFO    [0m | [32mFound 672 ValueSets and 492 CodeSystems[0m
+Traceback (most recent call last):
+  File "/Users/solbrig/.local/share/virtualenvs/fhir_model_generator-txFPmZYC/bin/generate", line 10, in <module>
+    sys.exit(main())
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/generate.py", line 88, in main
+    generator(sys.argv[1:])
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/generate.py", line 81, in generator
+    spec = fhirspec.FHIRSpec(spec_source, settings)
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/fhirspec.py", line 37, in __init__
+    self.prepare()
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/fhirspec.py", line 45, in prepare
+    self.handle_manual_profiles()
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/fhirspec.py", line 145, in handle_manual_profiles
+    profile.process_profile()
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/fhirspec.py", line 474, in process_profile
+    snap_class, subs = self.main_element.create_class(sort_resources=self._sort_resources)
+  File "/Users/solbrig/git/hsolbrig/fhir-parser/fhirparser/fhirspec.py", line 688, in create_class
+    assert not sort_resources
+AssertionError
