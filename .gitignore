@@ -109,4 +109,4 @@ venv.bak/
 # local files
 downloads/
 model/
-tests/
+tests/model/
