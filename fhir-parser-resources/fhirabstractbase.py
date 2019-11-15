@@ -4,11 +4,15 @@
 #  Base class for all FHIR elements.
 
 import logging
-from dataclasses import field, dataclass, InitVar
+from dataclasses import field, InitVar, dataclass
+
+# The following import is required for the all_types metnod.  Do not remove!
+# from .extension import Extension
 from typing import Optional
 
-logger = logging.getLogger(__name__)
+from .fhirelementproperty import elementProperties
 
+logger = logging.getLogger(__name__)
 
 class FHIRValidationError(Exception):
     """ Exception raised when one or more errors occurred during model
@@ -115,7 +119,7 @@ class FHIRAbstractBase:
         """
         if not isinstance(jsondict, dict):
             raise TypeError("Can only use `_with_json_dict()` on {} with a dictionary, got {}"
-                            .format(type(cls), type(jsondict)))
+                            .format(cls, type(jsondict)))
         return cls(jsondict)
 
     @classmethod
@@ -141,11 +145,6 @@ class FHIRAbstractBase:
 
     # MARK: (De)Serialization
 
-    def elementProperties(self):
-        """ Returns a list of tuples, one tuple for each property that should
-        be serialized, as: ("name", "json_name", type, is_list, "of_many", not_optional)
-        """
-        return []
 
     def update_with_json(self, jsondict):
         """ Update the receiver with data in a JSON dictionary.
@@ -163,20 +162,20 @@ class FHIRAbstractBase:
 
         # loop all registered properties and instantiate
         errs = []
-        valid = set(['resourceType'])  # used to also contain `fhir_comments` until STU-3
+        valid = {'resourceType'}  # used to also contain `fhir_comments` until STU-3
         found = set()
         nonoptionals = set()
-        for name, jsname, typ, is_list, of_many, not_optional in self.elementProperties():
-            valid.add(jsname)
-            if of_many is not None:
-                valid.add(of_many)
+        for ep in elementProperties(self):
+            valid.add(ep.json_name)
+            if ep.of_many is not None:
+                valid.add(ep.of_many)
 
             # bring the value in shape
             err = None
-            value = jsondict.get(jsname)
-            if value is not None and hasattr(typ, 'with_json_and_owner'):
+            value = jsondict.get(ep.json_name)
+            if value is not None and hasattr(ep.type, 'with_json_and_owner'):
                 try:
-                    value = typ.with_json_and_owner(value, self)
+                    value = ep.type.with_json_and_owner(value, self)
                 except Exception as e:
                     value = None
                     err = e
@@ -184,30 +183,30 @@ class FHIRAbstractBase:
             # got a value, test if it is of required type and assign
             if value is not None:
                 testval = value
-                if is_list:
+                if ep.is_list:
                     if not isinstance(value, list):
                         err = TypeError("Wrong type {} for list property \"{}\" on {}, expecting a list of {}"
-                                        .format(type(value), name, type(self), typ))
+                                        .format(type(value), ep.name, type(self), ep.type))
                         testval = None
                     else:
                         testval = value[0] if value and len(value) > 0 else None
 
-                if testval is not None and not self._matches_type(testval, typ):
+                if testval is not None and not self._matches_type(testval, ep.type):
                     err = TypeError("Wrong type {} for property \"{}\" on {}, expecting {}"
-                                    .format(type(testval), name, type(self), typ))
+                                    .format(type(testval), ep.name, type(self), ep.type))
                 else:
-                    setattr(self, name, value)
+                    setattr(self, ep.name, value)
 
-                found.add(jsname)
-                if of_many is not None:
-                    found.add(of_many)
+                found.add(ep.json_name)
+                if ep.of_many is not None:
+                    found.add(ep.of_many)
 
             # not optional and missing, report (we clean `of_many` later on)
-            elif not_optional:
-                nonoptionals.add(of_many or jsname)
+            elif ep.not_optional:
+                nonoptionals.add(ep.of_many or ep.json_name)
 
             # TODO: look at `_name` only if this is a primitive!
-            _jsname = '_' + jsname
+            _jsname = '_' + ep.json_name
             _value = jsondict.get(_jsname)
             if _value is not None:
                 valid.add(_jsname)
@@ -216,7 +215,8 @@ class FHIRAbstractBase:
             # report errors
             if err is not None:
                 errs.append(
-                    err.prefixed(name) if isinstance(err, FHIRValidationError) else FHIRValidationError([err], name))
+                    err.prefixed(ep.name) if isinstance(err, FHIRValidationError) else
+                    FHIRValidationError([err], ep.name))
 
         # were there missing non-optional entries?
         if len(nonoptionals) > 0:
@@ -250,45 +250,45 @@ class FHIRAbstractBase:
         # JSONify all registered properties
         found = set()
         nonoptionals = set()
-        for name, jsname, typ, is_list, of_many, not_optional in self.elementProperties():
-            if not_optional:
-                nonoptionals.add(of_many or jsname)
+        for ep in elementProperties(self):
+            if ep.not_optional:
+                nonoptionals.add(ep.of_many or ep.json_name)
 
             err = None
-            value = getattr(self, name)
+            value = getattr(self, ep.name)
             if value is None:
                 continue
 
-            if is_list:
+            if ep.is_list:
                 if not isinstance(value, list):
                     err = TypeError("Expecting property \"{}\" on {} to be list, but is {}"
-                                    .format(name, type(self), type(value)))
+                                    .format(ep.name, type(self), type(value)))
                 elif len(value) > 0:
-                    if not self._matches_type(value[0], typ):
+                    if not self._matches_type(value[0], ep.type):
                         err = TypeError("Expecting property \"{}\" on {} to be {}, but is {}"
-                                        .format(name, type(self), typ, type(value[0])))
+                                        .format(ep.name, type(self), ep.type, type(value[0])))
                     else:
                         lst = []
                         for v in value:
                             try:
                                 lst.append(v.as_json() if hasattr(v, 'as_json') else v)
                             except FHIRValidationError as e:
-                                err = e.prefixed(str(len(lst))).prefixed(name)
-                        found.add(of_many or jsname)
-                        js[jsname] = lst
+                                err = e.prefixed(str(len(lst))).prefixed(ep.name)
+                        found.add(ep.of_many or ep.json_name)
+                        js[ep.json_name] = lst
             else:
-                if not self._matches_type(value, typ):
+                if not self._matches_type(value, ep.type):
                     err = TypeError("Expecting property \"{}\" on {} to be {}, but is {}"
-                                    .format(name, type(self), typ, type(value)))
+                                    .format(ep.name, type(self), ep.json_name, type(value)))
                 else:
                     try:
-                        found.add(of_many or jsname)
-                        js[jsname] = value.as_json() if hasattr(value, 'as_json') else value
+                        found.add(ep.of_many or ep.json_name)
+                        js[ep.json_name] = value.as_json() if hasattr(value, 'as_json') else value
                     except FHIRValidationError as e:
-                        err = e.prefixed(name)
+                        err = e.prefixed(ep.name)
 
             if err is not None:
-                errs.append(err if isinstance(err, FHIRValidationError) else FHIRValidationError([err], name))
+                errs.append(err if isinstance(err, FHIRValidationError) else FHIRValidationError([err], ep.name))
 
         # any missing non-optionals?
         if len(nonoptionals - found) > 0:

@@ -3,6 +3,7 @@
 #
 #  Base class for FHIR resources.
 #  2014, SMART Health IT.
+from collections import OrderedDict
 
 from . import fhirabstractbase
 
@@ -39,11 +40,8 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
         return super(FHIRAbstractResource, cls)._with_json_dict(jsondict)
     
     def as_json(self):
-        js = super(FHIRAbstractResource, self).as_json()
-        js['resourceType'] = self.resource_type
-        return js
-    
-    
+        return OrderedDict(resourceType=self.resource_type, **super(FHIRAbstractResource, self).as_json())
+
     # MARK: Handling Paths
     
     def relativeBase(self):
@@ -61,8 +59,8 @@ class FHIRAbstractResource(fhirabstractbase.FHIRAbstractBase):
     def origin_server(self):
         """ Walks the owner hierarchy until it finds an owner with a server.
         """
-        server = self._server
-        owner = self._owner
+        server = getattr(self, '_server', None)
+        owner = getattr(self, '_owner', None)
         while server is None and owner is not None:
             server = getattr(owner, '_server', None)
             owner = owner._owner

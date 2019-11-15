@@ -15,24 +15,25 @@ from model.fhirdate import FHIRDate
 
 class {{ class.name }}Tests(unittest.TestCase):
     def instantiate_from(self, filename):
-        datadir = os.environ.get('FHIR_UNITTEST_DATADIR') or ''
+        datadir = os.environ.get('FHIR_UNITTEST_DATADIR') or \
+                  os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'fhir-parser', 'downloads'))
         with io.open(os.path.join(datadir, filename), 'r', encoding='utf-8') as handle:
             js = json.load(handle)
             self.assertEqual("{{ class.name }}", js["resourceType"])
         return {{ class.module }}.{{ class.name }}(js)
-    
+
 {%- for tcase in tests %}
-    
+
     def test{{ class.name }}{{ loop.index }}(self):
         inst = self.instantiate_from("{{ tcase.filename }}")
         self.assertIsNotNone(inst, "Must have instantiated a {{ class.name }} instance")
         self.impl{{ class.name }}{{ loop.index }}(inst)
-        
+
         js = inst.as_json()
         self.assertEqual("{{ class.name }}", js["resourceType"])
         inst2 = {{ class.module }}.{{ class.name }}(js)
         self.impl{{ class.name }}{{ loop.index }}(inst2)
-    
+
     def impl{{ class.name }}{{ loop.index }}(self, inst):
     {%- for onetest in tcase.tests %}
     {%- if "str" == onetest.klass.name %}
@@ -54,4 +55,5 @@ class {{ class.name }}Tests(unittest.TestCase):
     {%- endfor %}
 {%- endfor %}
 
-
+if __name__ == '__main__':
+    unittest.main()

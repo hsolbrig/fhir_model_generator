@@ -40,4 +40,5 @@ manual_profiles = [
     ('fhirreference.py', 'fhirreference', ['FHIRReference']),
     ('fhirdate.py', 'fhirdate', ['date', 'dateTime', 'instant', 'time']),
     ('fhirsearch.py', 'fhirsearch', ['FHIRSearch']),
+    ('fhirelementproperty.py', 'fhirelementproperty', []),
 ]

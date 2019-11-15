@@ -4,12 +4,12 @@
 #  Subclassing FHIR's reference to add resolving capabilities
 
 import logging
-from . import reference
+from .reference import Reference
 
 logger = logging.getLogger(__name__)
 
 
-class FHIRReference(reference.Reference):
+class FHIRReference(Reference):
     """ Subclassing FHIR's `Reference` resource to add resolving capabilities.
     """
     
