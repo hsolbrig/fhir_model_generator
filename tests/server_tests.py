@@ -5,6 +5,9 @@ import os
 import io
 import json
 import shutil
+from pprint import pprint
+from typing import List, Optional, Tuple
+
 from tests import server
 import unittest
 import model.fhirabstractbase as fabst
@@ -38,24 +41,53 @@ class TestServer(unittest.TestCase):
         self.assertIsNotNone(fhir.auth._token_uri)
     
     def testInvalidCapabilityStatement(self):
+        def build_error_tree(errors: List) -> List[Tuple[str, Optional[List]]]:
+            return [(str(e).strip()[:76], build_error_tree(e.errors) if getattr(e, 'errors', None) is not None else None) for e in errors]
         shutil.copyfile(os.path.join(filedir, 'test_metadata_invalid.json'), 'metadata')
         mock = MockServer()
         try:
             mock.get_capability()
             self.assertTrue(False, "Must have thrown exception")
         except fabst.FHIRValidationError as e:
-            self.assertEqual(4, len(e.errors))
-            self.assertEqual("date:", str(e.errors[0])[:5])
-            self.assertEqual("format:", str(e.errors[1])[:7])
-            self.assertEqual("rest.0:", str(e.errors[2])[:7])
-            self.assertEqual("operation.1:", str(e.errors[2].errors[0])[:12])
-            self.assertEqual("definition:", str(e.errors[2].errors[0].errors[0])[:11])
-            self.assertEqual("Wrong type <class 'dict'>", str(e.errors[2].errors[0].errors[0].errors[0])[:25])
-            self.assertEqual("security:", str(e.errors[2].errors[1])[:9])
-            self.assertEqual("service.0:", str(e.errors[2].errors[1].errors[0])[:10])
-            self.assertEqual("coding.0:", str(e.errors[2].errors[1].errors[0].errors[0])[:9])
-            self.assertEqual("Superfluous entry \"systems\"", str(e.errors[2].errors[1].errors[0].errors[0].errors[0])[:27])
-            self.assertEqual("Superfluous entry \"formats\"", str(e.errors[3])[:27])
+            self.assertListEqual(
+                [('date:\n'
+                  '  Wrong type <class \'list\'> for property "date" on <class \'model.capab',
+                  [('Wrong type <class \'list\'> for property "date" on <class '
+                    "'model.capabilitysta",
+                    None)]),
+                 ('format:\n'
+                  '  Wrong type <class \'int\'> for list property "format" on <class \'mod',
+                  [('Wrong type <class \'int\'> for list property "format" on <class '
+                    "'model.capabil",
+                    None)]),
+                 ('rest.0:\n'
+                  '  security:\n'
+                  '    service.0:\n'
+                  '      coding.0:\n'
+                  '        Superfluous entry',
+                  [('security:\n'
+                    '  service.0:\n'
+                    '    coding.0:\n'
+                    '      Superfluous entry "systems" in da',
+                    [('service.0:\n'
+                      '  coding.0:\n'
+                      '    Superfluous entry "systems" in data for Coding(id',
+                      [('coding.0:\n'
+                        '  Superfluous entry "systems" in data for Coding(id=None, extensio',
+                        [('Superfluous entry "systems" in data for Coding(id=None, '
+                          'extension=None, syst',
+                          None)])])]),
+                   ('operation.1:\n'
+                    '  definition:\n'
+                    '    Wrong type <class \'dict\'> for property "defin',
+                    [('definition:\n'
+                      '  Wrong type <class \'dict\'> for property "definition" on <class ',
+                      [('Wrong type <class \'dict\'> for property "definition" on <class '
+                        "'model.capabil",
+                        None)])])]),
+                 ('Superfluous entry "formats" in data for CapabilityStatement(id=None, '
+                  'meta=No',
+                  None)], build_error_tree(e.errors))
 
 
 class MockServer(server.FHIRServer):
