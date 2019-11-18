@@ -8,6 +8,6 @@ isodate = "*"
 requests = "*"
 
 [packages]
-fhirparser = ">=0.3.5"
+fhirparser = ">=0.4.0"
 
 
